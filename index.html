@@ -413,101 +413,123 @@
       }
     }
 
-    // 📷 写真撮影・選択時のGemini OCR処理
-    function onImageSelected(event, mode) {
+    // 📷 写真読み取り処理（スマホ軽量化・エラー詳細表示版）
+    async function onImageSelected(event, mode) {
       const file = event.target.files[0];
       if (!file) return;
 
       const overlay = document.getElementById("loadingOverlay");
       const loadingText = document.getElementById("loadingText");
       overlay.style.display = "flex";
-      loadingText.textContent = "AIが画像を読み取っています...";
+      loadingText.textContent = "画像を準備中...";
 
-      const reader = new FileReader();
-      reader.onload = function(e) {
-        const img = new Image();
-        img.onload = function() {
-          const canvas = document.createElement("canvas");
-          let width = img.width;
-          let height = img.height;
-          const maxDim = 1200;
-          if (width > maxDim || height > maxDim) {
-            if (width > height) {
-              height = Math.round((height * maxDim) / width);
-              width = maxDim;
-            } else {
-              width = Math.round((width * maxDim) / height);
-              height = maxDim;
-            }
-          }
-          canvas.width = width;
-          canvas.height = height;
-          const ctx = canvas.getContext("2d");
-          ctx.drawImage(img, 0, 0, width, height);
-          const base64Data = canvas.toDataURL("image/jpeg", 0.8).split(",")[1];
+      try {
+        const base64Data = await resizeImageToBase64(file, 1000, 0.7);
+        
+        loadingText.textContent = "AIが数字を読み取っています...";
 
-          let ocrType = "receipt";
-          if (mode === "sales-15h") {
-            ocrType = "sales_table";
+        let ocrType = "receipt";
+        if (mode === "sales-15h") {
+          ocrType = "sales_table";
+        } else if (mode === "morning-sales") {
+          ocrType = "morning_sales";
+        }
+
+        const res = await fetch(GAS_URL, {
+          method: "POST",
+          headers: { "Content-Type": "text/plain;charset=utf-8" },
+          body: JSON.stringify({ action: "ocr", base64Image: base64Data, ocrType: ocrType })
+        });
+
+        const jsonText = await res.text();
+        let dataRes;
+        try {
+          dataRes = JSON.parse(jsonText);
+        } catch(e) {
+          throw new Error("GASの応答がJSONではありません:\n" + jsonText.substring(0, 150));
+        }
+
+        overlay.style.display = "none";
+        event.target.value = "";
+
+        if (dataRes.status === "success" && dataRes.data) {
+          const d = dataRes.data;
+          if (mode === "receipt-8h") {
+            if (d.hiok !== undefined) document.getElementById("stock_hiok").value = d.hiok;
+            if (d.reg1 !== undefined) document.getElementById("stock_reg1").value = d.reg1;
+            if (d.reg2 !== undefined) document.getElementById("stock_reg2").value = d.reg2;
+            if (d.reg3 !== undefined) document.getElementById("stock_reg3").value = d.reg3;
+            if (d.reg4 !== undefined) document.getElementById("stock_reg4").value = d.reg4;
+            if (d.keiyu !== undefined) document.getElementById("stock_keiyu").value = d.keiyu;
+            if (d.toyu !== undefined) document.getElementById("stock_toyu").value = d.toyu;
+            if (earlyLorryMode === null) setEarlyLorry(false);
           } else if (mode === "morning-sales") {
-            ocrType = "morning_sales";
+            if (d.m_sales_hiok !== undefined) document.getElementById("m_sales_hiok").value = d.m_sales_hiok;
+            if (d.m_sales_reg !== undefined) document.getElementById("m_sales_reg").value = d.m_sales_reg;
+            if (d.m_sales_keiyu !== undefined) document.getElementById("m_sales_keiyu").value = d.m_sales_keiyu;
+            if (d.m_sales_toyu !== undefined) document.getElementById("m_sales_toyu").value = d.m_sales_toyu;
+          } else if (mode === "receipt-15h") {
+            if (d.hiok !== undefined) document.getElementById("stock15_hiok").value = d.hiok;
+            if (d.reg1 !== undefined) document.getElementById("stock15_reg1").value = d.reg1;
+            if (d.reg2 !== undefined) document.getElementById("stock15_reg2").value = d.reg2;
+            if (d.reg3 !== undefined) document.getElementById("stock15_reg3").value = d.reg3;
+            if (d.reg4 !== undefined) document.getElementById("stock15_reg4").value = d.reg4;
+            if (d.keiyu !== undefined) document.getElementById("stock15_keiyu").value = d.keiyu;
+            if (d.toyu !== undefined) document.getElementById("stock15_toyu").value = d.toyu;
+          } else if (mode === "sales-15h") {
+            if (d.cum_hiok !== undefined) document.getElementById("cum_hiok").value = d.cum_hiok;
+            if (d.cum_reg !== undefined) document.getElementById("cum_reg").value = d.cum_reg;
+            if (d.cum_keiyu !== undefined) document.getElementById("cum_keiyu").value = d.cum_keiyu;
+            if (d.cum_toyu !== undefined) document.getElementById("cum_toyu").value = d.cum_toyu;
+            calcTotal();
           }
+          alert("✅ 読み取りが完了しました！内容を確認してください。");
+        } else {
+          alert("⚠️ 読み取り結果が取得できませんでした。\n" + JSON.stringify(dataRes));
+        }
+      } catch (err) {
+        overlay.style.display = "none";
+        event.target.value = "";
+        alert("⚠️ 写真処理エラー詳細:\n" + err.message);
+      }
+    }
 
-          fetch(GAS_URL, {
-            method: "POST",
-            body: JSON.stringify({ action: "ocr", base64Image: base64Data, ocrType: ocrType })
-          })
-          .then(res => res.json())
-          .then(res => {
-            overlay.style.display = "none";
-            event.target.value = "";
+    // スマホの高解像度写真を軽量Base64に変換する関数
+    function resizeImageToBase64(file, maxDimension, quality) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onerror = () => reject(new Error("写真ファイルの読み込みに失敗しました"));
+        reader.onload = function(e) {
+          const img = new Image();
+          img.onerror = () => reject(new Error("写真画像の展開に失敗しました"));
+          img.onload = function() {
+            let width = img.width;
+            let height = img.height;
 
-            if (res.status === "success" && res.data) {
-              const d = res.data;
-              if (mode === "receipt-8h") {
-                if (d.hiok !== undefined) document.getElementById("stock_hiok").value = d.hiok;
-                if (d.reg1 !== undefined) document.getElementById("stock_reg1").value = d.reg1;
-                if (d.reg2 !== undefined) document.getElementById("stock_reg2").value = d.reg2;
-                if (d.reg3 !== undefined) document.getElementById("stock_reg3").value = d.reg3;
-                if (d.reg4 !== undefined) document.getElementById("stock_reg4").value = d.reg4;
-                if (d.keiyu !== undefined) document.getElementById("stock_keiyu").value = d.keiyu;
-                if (d.toyu !== undefined) document.getElementById("stock_toyu").value = d.toyu;
-                if (earlyLorryMode === null) setEarlyLorry(false);
-              } else if (mode === "morning-sales") {
-                if (d.m_sales_hiok !== undefined) document.getElementById("m_sales_hiok").value = d.m_sales_hiok;
-                if (d.m_sales_reg !== undefined) document.getElementById("m_sales_reg").value = d.m_sales_reg;
-                if (d.m_sales_keiyu !== undefined) document.getElementById("m_sales_keiyu").value = d.m_sales_keiyu;
-                if (d.m_sales_toyu !== undefined) document.getElementById("m_sales_toyu").value = d.m_sales_toyu;
-              } else if (mode === "receipt-15h") {
-                if (d.hiok !== undefined) document.getElementById("stock15_hiok").value = d.hiok;
-                if (d.reg1 !== undefined) document.getElementById("stock15_reg1").value = d.reg1;
-                if (d.reg2 !== undefined) document.getElementById("stock15_reg2").value = d.reg2;
-                if (d.reg3 !== undefined) document.getElementById("stock15_reg3").value = d.reg3;
-                if (d.reg4 !== undefined) document.getElementById("stock15_reg4").value = d.reg4;
-                if (d.keiyu !== undefined) document.getElementById("stock15_keiyu").value = d.keiyu;
-                if (d.toyu !== undefined) document.getElementById("stock15_toyu").value = d.toyu;
-              } else if (mode === "sales-15h") {
-                // 油種4種のみ自動入力（オイル・洗車は手入力のためそのまま保持）
-                if (d.cum_hiok !== undefined) document.getElementById("cum_hiok").value = d.cum_hiok;
-                if (d.cum_reg !== undefined) document.getElementById("cum_reg").value = d.cum_reg;
-                if (d.cum_keiyu !== undefined) document.getElementById("cum_keiyu").value = d.cum_keiyu;
-                if (d.cum_toyu !== undefined) document.getElementById("cum_toyu").value = d.cum_toyu;
-                calcTotal();
+            if (width > maxDimension || height > maxDimension) {
+              if (width > height) {
+                height = Math.round((height * maxDimension) / width);
+                width = maxDimension;
+              } else {
+                width = Math.round((width * maxDimension) / height);
+                height = maxDimension;
               }
-              alert("✅ AIによる読み取りが完了しました！内容を確認してください。");
-            } else {
-              alert("画像の読み取りに失敗しました。手動で入力してください。");
             }
-          })
-          .catch(err => {
-            overlay.style.display = "none";
-            event.target.value = "";
-            alert("通信エラーが発生しました: " + err);
-          });
+
+            const canvas = document.createElement("canvas");
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext("2d");
+            ctx.drawImage(img, 0, 0, width, height);
+
+            const dataUrl = canvas.toDataURL("image/jpeg", quality);
+            const base64 = dataUrl.split(",")[1];
+            resolve(base64);
+          };
+          img.src = e.target.result;
         };
-        img.src = e.target.result;
-      };
-      reader.readAsDataURL(file);
+        reader.readAsDataURL(file);
+      });
     }
 
     function toggleEditMode(type) {
