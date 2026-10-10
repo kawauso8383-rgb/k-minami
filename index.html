@@ -816,25 +816,63 @@
       return isNaN(val) ? "0.0" : (Math.round(val * 10) / 10).toString();
     };
 
-    document.getElementById("reportForm").addEventListener("submit", function(e) {
-      e.preventDefault();
+   // ★ここを丸ごと差し替えます
+    document.getElementById("reportForm").addEventListener("keydown", function(e) {
+      if (e.key === "Enter" && e.target.tagName !== "TEXTAREA") {
+        e.preventDefault();
 
-      if (currentTab === '8h' && earlyLorryMode === null) {
-        alert("⚠️ 早朝ローリー入庫の「あり」「なし」を選択してください。");
-        return;
+        // 🚨 早朝入庫量の欄でエンターを押した場合は次の入庫量（下）へ直行移動
+        const earlyOrder = [
+          "early_lorry_h",
+          "early_lorry_r1",
+          "early_lorry_r2",
+          "early_lorry_r3",
+          "early_lorry_r4",
+          "early_lorry_d",
+          "early_lorry_k"
+        ];
+        const earlyIdx = earlyOrder.indexOf(e.target.id);
+        if (earlyIdx > -1) {
+          if (earlyIdx < earlyOrder.length - 1) {
+            const nextEl = document.getElementById(earlyOrder[earlyIdx + 1]);
+            if (nextEl) { nextEl.focus(); return; }
+          } else {
+            const nextEl = document.getElementById("m_sales_hiok");
+            if (nextEl) { nextEl.focus(); return; }
+          }
+        }
+
+        // 🚨 左側のメーター在庫値でエンターを押した場合は次の在庫（下）へ直行移動
+        const stockOrder = [
+          "stock_hiok",
+          "stock_reg1",
+          "stock_reg2",
+          "stock_reg3",
+          "stock_reg4",
+          "stock_keiyu",
+          "stock_toyu"
+        ];
+        const stockIdx = stockOrder.indexOf(e.target.id);
+        if (stockIdx > -1) {
+          if (stockIdx < stockOrder.length - 1) {
+            const nextEl = document.getElementById(stockOrder[stockIdx + 1]);
+            if (nextEl) { nextEl.focus(); return; }
+          } else {
+            const nextEl = document.getElementById("m_sales_hiok");
+            if (nextEl) { nextEl.focus(); return; }
+          }
+        }
+
+        // その他の入力欄（朝販売や15時など）の通常移動
+        refreshNavInputs();
+        const idx = activeInputs.indexOf(e.target);
+        if (idx > -1 && idx < activeInputs.length - 1) {
+          activeInputs[idx + 1].focus();
+        } else {
+          e.target.blur();
+        }
       }
-
-      const overlay = document.getElementById("loadingOverlay");
-      const loadingText = document.getElementById("loadingText");
-      const submitBtn = document.getElementById("submitBtn");
-
-      let reportTypeName = "15時報告";
-      if (currentTab === '8h') {
-        reportTypeName = "8時報告";
-      } else if (currentTab === 'month') {
-        reportTypeName = "15時月末報告";
-      }
-
+    });
       const storeName = document.getElementById("store-label").textContent;
 
       const prevHiok = (parseFloat(document.getElementById("prev_hiok").value) || 0).toFixed(1);
