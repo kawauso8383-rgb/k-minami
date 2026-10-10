@@ -133,7 +133,49 @@
             </div>
           </div>
 
-          <!-- 2. 軽油（ここを上に移動） -->
+          <!-- 2. ①レギュラー -->
+          <div class="form-group">
+            <label>①レギュラー</label>
+            <div style="display:flex; gap:6px;">
+              <input type="number" step="any" id="stock_reg1" class="nav-input reg8-calc">
+              <input type="number" step="any" id="early_lorry_r1" class="nav-input early-field hidden" placeholder="入庫量" oninput="syncLorryValues()">
+            </div>
+          </div>
+
+          <!-- 3. ②レギュラー -->
+          <div class="form-group">
+            <label>②レギュラー</label>
+            <div style="display:flex; gap:6px;">
+              <input type="number" step="any" id="stock_reg2" class="nav-input reg8-calc">
+              <input type="number" step="any" id="early_lorry_r2" class="nav-input early-field hidden" placeholder="入庫量" oninput="syncLorryValues()">
+            </div>
+          </div>
+
+          <!-- 4. ③レギュラー -->
+          <div class="form-group">
+            <label>③レギュラー</label>
+            <div style="display:flex; gap:6px;">
+              <input type="number" step="any" id="stock_reg3" class="nav-input reg8-calc">
+              <input type="number" step="any" id="early_lorry_r3" class="nav-input early-field hidden" placeholder="入庫量" oninput="syncLorryValues()">
+            </div>
+          </div>
+
+          <!-- 5. ④レギュラー -->
+          <div class="form-group">
+            <label>④レギュラー</label>
+            <div style="display:flex; gap:6px;">
+              <input type="number" step="any" id="stock_reg4" class="nav-input reg8-calc">
+              <input type="number" step="any" id="early_lorry_r4" class="nav-input early-field hidden" placeholder="入庫量" oninput="syncLorryValues()">
+            </div>
+          </div>
+
+          <!-- 6. レギュラー合計 (自動計算) -->
+          <div class="form-group">
+            <label style="color:#059669; font-weight:700;">レギュラー合計</label>
+            <input type="text" id="stock_reg_total" class="readonly" readonly value="0 L">
+          </div>
+
+          <!-- 7. 軽油 -->
           <div class="form-group">
             <label>軽油</label>
             <div style="display:flex; gap:6px;">
@@ -142,37 +184,7 @@
             </div>
           </div>
 
-          <!-- 3. レギュラー①〜④（軽油の下に配置） -->
-          <div class="form-group">
-            <label>レギュラー①</label>
-            <div style="display:flex; gap:6px;">
-              <input type="number" step="any" id="stock_reg1" class="nav-input">
-              <input type="number" step="any" id="early_lorry_r1" class="nav-input early-field hidden" placeholder="入庫量" oninput="syncLorryValues()">
-            </div>
-          </div>
-          <div class="form-group">
-            <label>レギュラー②</label>
-            <div style="display:flex; gap:6px;">
-              <input type="number" step="any" id="stock_reg2" class="nav-input">
-              <input type="number" step="any" id="early_lorry_r2" class="nav-input early-field hidden" placeholder="入庫量" oninput="syncLorryValues()">
-            </div>
-          </div>
-          <div class="form-group">
-            <label>レギュラー③</label>
-            <div style="display:flex; gap:6px;">
-              <input type="number" step="any" id="stock_reg3" class="nav-input">
-              <input type="number" step="any" id="early_lorry_r3" class="nav-input early-field hidden" placeholder="入庫量" oninput="syncLorryValues()">
-            </div>
-          </div>
-          <div class="form-group">
-            <label>レギュラー④</label>
-            <div style="display:flex; gap:6px;">
-              <input type="number" step="any" id="stock_reg4" class="nav-input">
-              <input type="number" step="any" id="early_lorry_r4" class="nav-input early-field hidden" placeholder="入庫量" oninput="syncLorryValues()">
-            </div>
-          </div>
-
-          <!-- 4. 灯油 -->
+          <!-- 8. 灯油 -->
           <div class="form-group">
             <label>灯油</label>
             <div style="display:flex; gap:6px;">
@@ -278,16 +290,28 @@
         <!-- 1. ハイオク -->
         <div class="form-group"><label>在庫ハイオク</label><input type="number" step="any" id="stock15_hiok" class="nav-input" enterkeyhint="next"></div>
 
-        <!-- 2. 軽油（ここを上に移動） -->
+        <!-- 2. ①レギュラー -->
+        <div class="form-group"><label>在庫①レギュラー</label><input type="number" step="any" id="stock15_reg1" class="nav-input reg15-calc" enterkeyhint="next"></div>
+
+        <!-- 3. ②レギュラー -->
+        <div class="form-group"><label>在庫②レギュラー</label><input type="number" step="any" id="stock15_reg2" class="nav-input reg15-calc" enterkeyhint="next"></div>
+
+        <!-- 4. ③レギュラー -->
+        <div class="form-group"><label>在庫③レギュラー</label><input type="number" step="any" id="stock15_reg3" class="nav-input reg15-calc" enterkeyhint="next"></div>
+
+        <!-- 5. ④レギュラー -->
+        <div class="form-group"><label>在庫④レギュラー</label><input type="number" step="any" id="stock15_reg4" class="nav-input reg15-calc" enterkeyhint="next"></div>
+
+        <!-- 6. レギュラー合計 (自動計算) -->
+        <div class="form-group">
+          <label style="color:#059669; font-weight:700;">在庫レギュラー合計</label>
+          <input type="text" id="stock15_reg_total" class="readonly" readonly value="0 L">
+        </div>
+
+        <!-- 7. 軽油 -->
         <div class="form-group"><label>在庫軽油</label><input type="number" step="any" id="stock15_keiyu" class="nav-input" enterkeyhint="next"></div>
 
-        <!-- 3. レギュラー①〜④（軽油の下に配置） -->
-        <div class="form-group"><label>在庫レギュラー①</label><input type="number" step="any" id="stock15_reg1" class="nav-input" enterkeyhint="next"></div>
-        <div class="form-group"><label>在庫レギュラー②</label><input type="number" step="any" id="stock15_reg2" class="nav-input" enterkeyhint="next"></div>
-        <div class="form-group"><label>在庫レギュラー③</label><input type="number" step="any" id="stock15_reg3" class="nav-input" enterkeyhint="next"></div>
-        <div class="form-group"><label>在庫レギュラー④</label><input type="number" step="any" id="stock15_reg4" class="nav-input" enterkeyhint="next"></div>
-
-        <!-- 4. 灯油 -->
+        <!-- 8. 灯油 -->
         <div class="form-group"><label>在庫灯油</label><input type="number" step="any" id="stock15_toyu" class="nav-input" enterkeyhint="next"></div>
       </div>
 
@@ -369,6 +393,31 @@
     let loadTimer = null;
     let isTyManual = false;
     let earlyLorryMode = null;
+
+    function calcReg8Total() {
+      const r1 = parseFloat(document.getElementById("stock_reg1").value) || 0;
+      const r2 = parseFloat(document.getElementById("stock_reg2").value) || 0;
+      const r3 = parseFloat(document.getElementById("stock_reg3").value) || 0;
+      const r4 = parseFloat(document.getElementById("stock_reg4").value) || 0;
+      const total = r1 + r2 + r3 + r4;
+      document.getElementById("stock_reg_total").value = total.toLocaleString() + " L";
+    }
+
+    function calcReg15Total() {
+      const r1 = parseFloat(document.getElementById("stock15_reg1").value) || 0;
+      const r2 = parseFloat(document.getElementById("stock15_reg2").value) || 0;
+      const r3 = parseFloat(document.getElementById("stock15_reg3").value) || 0;
+      const r4 = parseFloat(document.getElementById("stock15_reg4").value) || 0;
+      const total = r1 + r2 + r3 + r4;
+      document.getElementById("stock15_reg_total").value = total.toLocaleString() + " L";
+    }
+
+    document.querySelectorAll('.reg8-calc').forEach(el => {
+      el.addEventListener('input', calcReg8Total);
+    });
+    document.querySelectorAll('.reg15-calc').forEach(el => {
+      el.addEventListener('input', calcReg15Total);
+    });
 
     function setEarlyLorry(hasEarly) {
       earlyLorryMode = hasEarly;
@@ -477,6 +526,7 @@
             if (d.reg4 !== undefined) document.getElementById("stock_reg4").value = d.reg4;
             if (d.keiyu !== undefined) document.getElementById("stock_keiyu").value = d.keiyu;
             if (d.toyu !== undefined) document.getElementById("stock_toyu").value = d.toyu;
+            calcReg8Total();
             if (earlyLorryMode === null) setEarlyLorry(false);
           } else if (mode === "morning-sales") {
             if (d.m_sales_hiok !== undefined) document.getElementById("m_sales_hiok").value = d.m_sales_hiok;
@@ -491,6 +541,7 @@
             if (d.reg4 !== undefined) document.getElementById("stock15_reg4").value = d.reg4;
             if (d.keiyu !== undefined) document.getElementById("stock15_keiyu").value = d.keiyu;
             if (d.toyu !== undefined) document.getElementById("stock15_toyu").value = d.toyu;
+            calcReg15Total();
           } else if (mode === "sales-15h") {
             if (d.cum_hiok !== undefined) document.getElementById("cum_hiok").value = d.cum_hiok;
             if (d.cum_reg !== undefined) document.getElementById("cum_reg").value = d.cum_reg;
@@ -895,6 +946,8 @@ ${todayLorryBlock}${todayLorryVal}`;
         document.getElementById("tom_lorry_manual_box").classList.add("hidden");
         setEarlyLorry(false);
         calcTotal();
+        calcReg8Total();
+        calcReg15Total();
 
         loadLatestData();
         window.location.href = "line://msg/text/" + encodeURIComponent(lineText);
