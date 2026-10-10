@@ -129,7 +129,7 @@
             <label>ハイオク</label>
             <div style="display:flex; gap:6px;">
               <input type="number" step="any" id="stock_hiok" class="nav-input">
-              <input type="number" step="any" id="early_lorry_h" class="nav-input early-field hidden" placeholder="入庫量" oninput="syncLorryValues()">
+              <input type="number" step="any" id="early_lorry_h" class="nav-input early-field hidden" placeholder="入庫量" oninput="syncLorryValues()" enterkeyhint="next">
             </div>
           </div>
 
@@ -138,7 +138,7 @@
             <label>①レギュラー</label>
             <div style="display:flex; gap:6px;">
               <input type="number" step="any" id="stock_reg1" class="nav-input reg8-calc">
-              <input type="number" step="any" id="early_lorry_r1" class="nav-input early-field hidden" placeholder="入庫量" oninput="syncLorryValues()">
+              <input type="number" step="any" id="early_lorry_r1" class="nav-input early-field hidden" placeholder="入庫量" oninput="syncLorryValues()" enterkeyhint="next">
             </div>
           </div>
 
@@ -147,7 +147,7 @@
             <label>②レギュラー</label>
             <div style="display:flex; gap:6px;">
               <input type="number" step="any" id="stock_reg2" class="nav-input reg8-calc">
-              <input type="number" step="any" id="early_lorry_r2" class="nav-input early-field hidden" placeholder="入庫量" oninput="syncLorryValues()">
+              <input type="number" step="any" id="early_lorry_r2" class="nav-input early-field hidden" placeholder="入庫量" oninput="syncLorryValues()" enterkeyhint="next">
             </div>
           </div>
 
@@ -156,7 +156,7 @@
             <label>③レギュラー</label>
             <div style="display:flex; gap:6px;">
               <input type="number" step="any" id="stock_reg3" class="nav-input reg8-calc">
-              <input type="number" step="any" id="early_lorry_r3" class="nav-input early-field hidden" placeholder="入庫量" oninput="syncLorryValues()">
+              <input type="number" step="any" id="early_lorry_r3" class="nav-input early-field hidden" placeholder="入庫量" oninput="syncLorryValues()" enterkeyhint="next">
             </div>
           </div>
 
@@ -165,7 +165,7 @@
             <label>④レギュラー</label>
             <div style="display:flex; gap:6px;">
               <input type="number" step="any" id="stock_reg4" class="nav-input reg8-calc">
-              <input type="number" step="any" id="early_lorry_r4" class="nav-input early-field hidden" placeholder="入庫量" oninput="syncLorryValues()">
+              <input type="number" step="any" id="early_lorry_r4" class="nav-input early-field hidden" placeholder="入庫量" oninput="syncLorryValues()" enterkeyhint="next">
             </div>
           </div>
 
@@ -180,7 +180,7 @@
             <label>軽油</label>
             <div style="display:flex; gap:6px;">
               <input type="number" step="any" id="stock_keiyu" class="nav-input">
-              <input type="number" step="any" id="early_lorry_d" class="nav-input early-field hidden" placeholder="入庫量" oninput="syncLorryValues()">
+              <input type="number" step="any" id="early_lorry_d" class="nav-input early-field hidden" placeholder="入庫量" oninput="syncLorryValues()" enterkeyhint="next">
             </div>
           </div>
 
@@ -189,7 +189,7 @@
             <label>灯油</label>
             <div style="display:flex; gap:6px;">
               <input type="number" step="any" id="stock_toyu" class="nav-input">
-              <input type="number" step="any" id="early_lorry_k" class="nav-input early-field hidden" placeholder="入庫量" oninput="syncLorryValues()">
+              <input type="number" step="any" id="early_lorry_k" class="nav-input early-field hidden" placeholder="入庫量" oninput="syncLorryValues()" enterkeyhint="next">
             </div>
           </div>
         </div>
@@ -715,9 +715,68 @@
         .filter(el => el.offsetWidth > 0 && el.offsetHeight > 0);
     }
 
+    // ★エンターキー押下時の移動制御（入庫量は入庫量へ下に直行移動）
     document.getElementById("reportForm").addEventListener("keydown", function(e) {
       if (e.key === "Enter" && e.target.tagName !== "TEXTAREA") {
         e.preventDefault();
+
+        // 🚨 早朝入庫量の欄でエンターを押した場合は次の入庫量（下）へ直行移動
+        const earlyOrder = [
+          "early_lorry_h",
+          "early_lorry_r1",
+          "early_lorry_r2",
+          "early_lorry_r3",
+          "early_lorry_r4",
+          "early_lorry_d",
+          "early_lorry_k"
+        ];
+
+        const earlyIdx = earlyOrder.indexOf(e.target.id);
+        if (earlyIdx > -1) {
+          if (earlyIdx < earlyOrder.length - 1) {
+            const nextEl = document.getElementById(earlyOrder[earlyIdx + 1]);
+            if (nextEl) {
+              nextEl.focus();
+              return;
+            }
+          } else {
+            // 灯油入庫量の次は朝のハイオク販売へ移動
+            const nextEl = document.getElementById("m_sales_hiok");
+            if (nextEl) {
+              nextEl.focus();
+              return;
+            }
+          }
+        }
+
+        // 🚨 8時メーター在庫側（左側）でエンターを押した場合は次の在庫（下）へ直行移動
+        const stockOrder = [
+          "stock_hiok",
+          "stock_reg1",
+          "stock_reg2",
+          "stock_reg3",
+          "stock_reg4",
+          "stock_keiyu",
+          "stock_toyu"
+        ];
+        const stockIdx = stockOrder.indexOf(e.target.id);
+        if (stockIdx > -1) {
+          if (stockIdx < stockOrder.length - 1) {
+            const nextEl = document.getElementById(stockOrder[stockIdx + 1]);
+            if (nextEl) {
+              nextEl.focus();
+              return;
+            }
+          } else {
+            const nextEl = document.getElementById("m_sales_hiok");
+            if (nextEl) {
+              nextEl.focus();
+              return;
+            }
+          }
+        }
+
+        // 通常のフォーム移動（朝販売や15時報告など）
         refreshNavInputs();
         const idx = activeInputs.indexOf(e.target);
         if (idx > -1 && idx < activeInputs.length - 1) {
