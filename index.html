@@ -32,23 +32,32 @@
     .card-header-flex { display: flex; justify-content: space-between; align-items: center; border-bottom: 2.5px solid var(--primary-color); padding-bottom: 6px; margin-bottom: 12px; }
     .card-title { font-size: 1.05rem; font-weight: 700; color: #111827; }
     
-    /* 大きめのカメラアイコン専用スタイル */
+    /* 📷 シニア向け：押しやすく目立つカメラ読取ボタン */
     .camera-btn { 
-      width: 42px; 
-      height: 42px; 
-      font-size: 1.4rem; 
+      height: 40px; 
+      padding: 0 12px;
+      font-size: 0.9rem; 
+      font-weight: 700;
       border-radius: 10px; 
-      border: 1.5px solid #3b82f6; 
+      border: 1.5px solid #2563eb; 
       background-color: #eff6ff; 
+      color: #1d4ed8;
       cursor: pointer; 
-      display: flex; 
+      display: inline-flex; 
       align-items: center; 
       justify-content: center; 
-      padding: 0; 
-      line-height: 1; 
-      box-shadow: 0 1px 2px rgba(59, 130, 246, 0.15);
+      gap: 5px;
+      box-shadow: 0 1px 3px rgba(37, 99, 235, 0.15);
+      -webkit-tap-highlight-color: transparent;
     }
-    .camera-btn:active { background-color: #3b82f6; }
+    .camera-btn span.icon {
+      font-size: 1.25rem;
+      line-height: 1;
+    }
+    .camera-btn:active { 
+      background-color: #2563eb; 
+      color: #ffffff;
+    }
     
     .edit-toggle-btn { padding: 3px 8px; font-size: 0.75rem; font-weight: 700; border-radius: 6px; border: 1px solid #d1d5db; background-color: #f9fafb; color: var(--text-sub); cursor: pointer; }
     .edit-toggle-btn.active { background-color: #fef3c7; border-color: #f59e0b; color: #b45309; }
@@ -123,8 +132,10 @@
       <div class="card">
         <div class="card-header-flex">
           <div class="card-title">朝の在庫 (L)</div>
-          <!-- 📷 大きめのカメラマークのみ -->
-          <button type="button" class="camera-btn" onclick="document.getElementById('camera-receipt-8h').click()" title="レシート読取">📸</button>
+          <!-- 📷 大きめアイコン＋はっきり読める文字 -->
+          <button type="button" class="camera-btn" onclick="document.getElementById('camera-receipt-8h').click()">
+            <span class="icon">📸</span><span>カメラ読取</span>
+          </button>
         </div>
 
         <div class="early-box">
@@ -226,8 +237,10 @@
       <div class="card">
         <div class="card-header-flex">
           <div class="card-title">朝販売数量 (L)</div>
-          <!-- 📷 大きめのカメラマークのみ -->
-          <button type="button" class="camera-btn" onclick="document.getElementById('camera-morning-sales').click()" title="朝販売読取">📸</button>
+          <!-- 📷 大きめアイコン＋はっきり読める文字 -->
+          <button type="button" class="camera-btn" onclick="document.getElementById('camera-morning-sales').click()">
+            <span class="icon">📸</span><span>カメラ読取</span>
+          </button>
         </div>
         <div class="form-group"><label>朝のハイオク</label><input type="number" step="any" id="m_sales_hiok" class="nav-input" enterkeyhint="next"></div>
         <div class="form-group"><label>朝のレギュラー</label><input type="number" step="any" id="m_sales_reg" class="nav-input" enterkeyhint="next"></div>
@@ -254,8 +267,10 @@
       <div class="card">
         <div class="card-header-flex">
           <div class="card-title">本日の販売累計 (L)</div>
-          <!-- 📷 大きめのカメラマークのみ -->
-          <button type="button" class="camera-btn" onclick="document.getElementById('camera-sales-15h').click()" title="日計表読取">📸</button>
+          <!-- 📷 大きめアイコン＋はっきり読める文字 -->
+          <button type="button" class="camera-btn" onclick="document.getElementById('camera-sales-15h').click()">
+            <span class="icon">📸</span><span>カメラ読取</span>
+          </button>
         </div>
         <div class="form-group"><label>ハイオク (L)</label><input type="number" step="any" id="cum_hiok" class="nav-input cum-calc" enterkeyhint="next"></div>
         <div class="form-group"><label>レギュラー (L)</label><input type="number" step="any" id="cum_reg" class="nav-input cum-calc" enterkeyhint="next"></div>
@@ -272,8 +287,10 @@
       <div class="card">
         <div class="card-header-flex">
           <div class="card-title">15時在庫 (L)</div>
-          <!-- 📷 大きめのカメラマークのみ -->
-          <button type="button" class="camera-btn" onclick="document.getElementById('camera-receipt-15h').click()" title="レシート読取">📸</button>
+          <!-- 📷 大きめアイコン＋はっきり読める文字 -->
+          <button type="button" class="camera-btn" onclick="document.getElementById('camera-receipt-15h').click()">
+            <span class="icon">📸</span><span>カメラ読取</span>
+          </button>
         </div>
 
         <!-- 1. ハイオク -->
@@ -434,6 +451,8 @@
       }
       refreshNavInputs();
     }
+
+    function syncLorryValues() {}
 
     // 📷 写真読み取り処理
     async function onImageSelected(event, mode) {
