@@ -32,8 +32,23 @@
     .card-header-flex { display: flex; justify-content: space-between; align-items: center; border-bottom: 2.5px solid var(--primary-color); padding-bottom: 6px; margin-bottom: 12px; }
     .card-title { font-size: 1.05rem; font-weight: 700; color: #111827; }
     
-    .camera-btn { padding: 4px 10px; font-size: 0.8rem; font-weight: 700; border-radius: 8px; border: 1.5px solid #3b82f6; background-color: #eff6ff; color: #1d4ed8; cursor: pointer; display: flex; align-items: center; gap: 4px; }
-    .camera-btn:active { background-color: #3b82f6; color: white; }
+    /* 大きめのカメラアイコン専用スタイル */
+    .camera-btn { 
+      width: 42px; 
+      height: 42px; 
+      font-size: 1.4rem; 
+      border-radius: 10px; 
+      border: 1.5px solid #3b82f6; 
+      background-color: #eff6ff; 
+      cursor: pointer; 
+      display: flex; 
+      align-items: center; 
+      justify-content: center; 
+      padding: 0; 
+      line-height: 1; 
+      box-shadow: 0 1px 2px rgba(59, 130, 246, 0.15);
+    }
+    .camera-btn:active { background-color: #3b82f6; }
     
     .edit-toggle-btn { padding: 3px 8px; font-size: 0.75rem; font-weight: 700; border-radius: 6px; border: 1px solid #d1d5db; background-color: #f9fafb; color: var(--text-sub); cursor: pointer; }
     .edit-toggle-btn.active { background-color: #fef3c7; border-color: #f59e0b; color: #b45309; }
@@ -108,7 +123,8 @@
       <div class="card">
         <div class="card-header-flex">
           <div class="card-title">朝の在庫 (L)</div>
-          <button type="button" class="camera-btn" onclick="document.getElementById('camera-receipt-8h').click()">📷 在庫レシート読取</button>
+          <!-- 📷 大きめのカメラマークのみ -->
+          <button type="button" class="camera-btn" onclick="document.getElementById('camera-receipt-8h').click()" title="レシート読取">📸</button>
         </div>
 
         <div class="early-box">
@@ -210,14 +226,15 @@
       <div class="card">
         <div class="card-header-flex">
           <div class="card-title">朝販売数量 (L)</div>
-          <button type="button" class="camera-btn" onclick="document.getElementById('camera-morning-sales').click()">📷 朝販売読取</button>
+          <!-- 📷 大きめのカメラマークのみ -->
+          <button type="button" class="camera-btn" onclick="document.getElementById('camera-morning-sales').click()" title="朝販売読取">📸</button>
         </div>
         <div class="form-group"><label>朝のハイオク</label><input type="number" step="any" id="m_sales_hiok" class="nav-input" enterkeyhint="next"></div>
         <div class="form-group"><label>朝のレギュラー</label><input type="number" step="any" id="m_sales_reg" class="nav-input" enterkeyhint="next"></div>
         <div class="form-group"><label>朝の軽油</label><input type="number" step="any" id="m_sales_keiyu" class="nav-input" enterkeyhint="next"></div>
         <div class="form-group"><label>朝の灯油</label><input type="number" step="any" id="m_sales_toyu" class="nav-input" enterkeyhint="next"></div>
 
-        <!-- ★追加：本日の入庫状況プルダウン -->
+        <!-- 本日の入庫状況プルダウン -->
         <div style="margin-top: 14px; border-top: 1px solid var(--border-color); padding-top: 10px;">
           <label style="font-size: 0.85rem; font-weight: 600;">本日の入庫状況プルダウン</label>
           <select class="full-width-select nav-input" id="today_lorry_status" onchange="toggleLorryInput('today')">
@@ -237,7 +254,8 @@
       <div class="card">
         <div class="card-header-flex">
           <div class="card-title">本日の販売累計 (L)</div>
-          <button type="button" class="camera-btn" onclick="document.getElementById('camera-sales-15h').click()">📷 集計表読取</button>
+          <!-- 📷 大きめのカメラマークのみ -->
+          <button type="button" class="camera-btn" onclick="document.getElementById('camera-sales-15h').click()" title="日計表読取">📸</button>
         </div>
         <div class="form-group"><label>ハイオク (L)</label><input type="number" step="any" id="cum_hiok" class="nav-input cum-calc" enterkeyhint="next"></div>
         <div class="form-group"><label>レギュラー (L)</label><input type="number" step="any" id="cum_reg" class="nav-input cum-calc" enterkeyhint="next"></div>
@@ -254,7 +272,8 @@
       <div class="card">
         <div class="card-header-flex">
           <div class="card-title">15時在庫 (L)</div>
-          <button type="button" class="camera-btn" onclick="document.getElementById('camera-receipt-15h').click()">📷 在庫レシート読取</button>
+          <!-- 📷 大きめのカメラマークのみ -->
+          <button type="button" class="camera-btn" onclick="document.getElementById('camera-receipt-15h').click()" title="レシート読取">📸</button>
         </div>
 
         <!-- 1. ハイオク -->
